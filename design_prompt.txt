@@ -1,0 +1,111 @@
+PROJECT
+A single-page personal website I'm building for my friend Abhi's wedding.
+It's a digital gift-reveal: when he visits and enters the right password,
+it reveals a QR code for a gift card (Amazon/Flipkart-style image — use a
+placeholder QR for now). The site lives at ajv009.com/abhi, so configure
+any router/asset paths for the /abhi base path.
+
+THE BIG IDEA
+This is a letter from one broke-but-loving friend to another, dressed up
+as a website. His wedding is on the 28th, my paycheck arrives on the 2nd,
+the gift is ready on the 5th. The site doesn't pretend the situation
+isn't what it is — it owns it, charms its way through it, and ends with
+a real gift. Think "handwritten note" energy, not "Hallmark e-card."
+
+TONE
+Playful, warm, slightly self-deprecating, honest. Like texting your best
+friend, not addressing a stranger. Never corporate, never saccharine,
+never "Dear Sir/Madam." Use lowercase casually where it fits. One or two
+moments of genuine sentiment land harder than constant earnestness.
+
+VISUAL DIRECTION
+- Off-white / warm cream background (#FBF7F0 or similar). NOT pure white.
+- One accent color with personality — dusty terracotta, soft marigold,
+  or muted rose. Pick one and commit, don't gradient-soup it.
+- Type: one expressive serif for headlines (something with character —
+  Fraunces, DM Serif Display, Instrument Serif), one clean grotesk for
+  body (Inter, General Sans). One handwritten/script accent used ONCE
+  for a single line of intimacy (Caveat, Homemade Apple).
+- Generous whitespace. Letter-like proportions: narrow content column,
+  lots of breathing room top and bottom.
+- Tiny illustrative touches over big graphics — a small wax-seal-style
+  emblem, a hand-drawn arrow, a single confetti burst on unlock. NOT
+  stock floral wedding vector art.
+- Mobile-first. Most guests will see this on a phone.
+
+THE THREE STATES (single page, three views)
+
+1. PLACEHOLDER (default state, before the gift is "ready")
+   - Greeting: "hey abhi." — large serif, lowercase
+   - Sub-line: an honest one-liner like "your gift was supposed to be
+     here on the 28th. it'll be here on the 5th. same gift, same love,
+     slightly late paycheck."
+   - A small live countdown to May 5 (days/hours, not seconds — chill).
+   - A tiny p.s. at the bottom in the handwritten font: "p.s. there's a
+     password coming. it's in the letter."
+   - That's it. No nav, no footer, no logo. One page, one feeling.
+
+2. LOCKED (the gift is ready, but needs the password)
+   - Same greeting style, new line: "okay. it's time."
+   - One short line: "the date that started everything. ddmmyyyy."
+   - A single numeric input, large, centered, monospace digits.
+   - A submit affordance — could be Enter-to-submit with a subtle hint
+     icon, or a single understated button.
+   - On wrong password: gentle shake + a warm error like "hmm, not
+     quite. re-read the letter." NEVER red-alert-error styling.
+   - On correct password: smooth fade/scale transition into state 3.
+
+3. UNLOCKED (the reveal)
+   - One celebratory beat — a single confetti burst, or the page subtly
+     blooming open. Not over-animated.
+   - Headline: "there it is. 🎉" (one emoji used purposefully, not five)
+   - Centered QR code (use a placeholder QR image for now — I'll swap
+     in the real giftcard QR later). Around 280px on mobile, larger on
+     desktop. White card background under it for scan reliability.
+   - Below the QR: friend's name + amount placeholder + a real personal
+     line like "congrats brother. now go get something you'd actually
+     enjoy. love you."
+   - A small "save image" or "download QR" button below.
+   - No "share" buttons, no social anything. This is private.
+
+CRYPTO (important — the unlock must be real, not a fake check)
+- The gift QR (or the URL/data the QR encodes) must be AES-encrypted
+  client-side using the password as the key, derived via PBKDF2-SHA256
+  with at least 600,000 iterations and a random salt.
+- The encrypted ciphertext + salt + IV are baked into the static site
+  as constants (or a small JSON blob).
+- On submit: derive key from input → attempt AES-GCM decrypt → if it
+  succeeds (auth tag valid), reveal the plaintext (the QR / image data
+  URL); if it fails, show the gentle error.
+- Use the WebCrypto API (window.crypto.subtle). No external crypto libs.
+- This means with no password the site literally has no gift in it,
+  just ciphertext. That's the point.
+
+MICRO-INTERACTIONS
+- Subtle parallax or breathing animation on the headline — not
+  distracting, just alive.
+- Countdown numbers should tick smoothly, not jankily.
+- State transitions: 300-500ms cross-fades, no harsh cuts.
+- Focus the password input on state 2 mount.
+- Respect prefers-reduced-motion: kill all the cute stuff, keep the
+  fades.
+
+TECH
+- Static site. No backend. No database. No analytics.
+- Vanilla or React + Vite + Tailwind, your call. Output should be
+  buildable to static HTML/CSS/JS that I can `npm run build` and drop
+  into a GH Pages repo.
+- Configure base path / public path for /abhi/.
+- Single .env-free build. No keys, no API calls, no fonts that need
+  network beyond Google Fonts (or self-host the fonts in /public).
+- Lighthouse ≥ 95 on mobile.
+
+DON'T
+- Don't use generic AI design language: no purple-to-pink gradients,
+  no glassmorphism cards, no "Lorem ipsum" energy, no rounded-2xl-on-
+  everything, no shadcn out-of-the-box look.
+- Don't add wedding clipart, ribbon banners, or "Mr. & Mrs." motifs.
+- Don't make it feel like an e-commerce checkout. It's a letter.
+- Don't put a logo, a navigation, a footer, social links, or a
+  "powered by" anywhere.
+- Don't use the word "celebration." Show it instead.
