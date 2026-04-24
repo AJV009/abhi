@@ -1,14 +1,28 @@
 // src/app.jsx
 var { useState, useEffect, useRef, useCallback, useMemo } = React;
-var GIFT_READY = "2026-05-05T09:00:00+05:30";
-var FRIEND_NAME = "abhi";
-var AMOUNT = "₹5,000";
-var CLOSING = "congrats brother. now go get something you'd actually enjoy. love you.";
-var PW_HINT = "the date that started everything.";
-var GIFT_BLOB = {
-  salt: "VxgVjlu61dzhX1QRh7XMkw==",
-  iv: "po600b8GkQgYfAuQ",
-  ct: "rVxV+JA21ouKANZETiKRaG9sNNSx0atm5ShJ29Tk1mZ1Uj1fhpyZXmvvO+1gx1x1fEKn3YyERMfIqPRQQAQaVazkUm/YmP0OgA==",
+var COPY = {
+  friendName: "abhi",
+  forLine: "for Abhi & Sanjeeveni",
+  greetWedding: "so... wedding aye?",
+  hintWedding: "Obviously your day!",
+  fmtWedding: "ddmmyyyy",
+  psMessage: "There is another password coming, its in the note above...",
+  hintGift: "Can you find/recall the date you first commented on my post? It was a Feb, 6yrs ago :)",
+  fmtGift: "ddmmyyyy",
+  psUnlocked: "So enjoy bro, have fun. Hope this helps ease out your wedding expenses.",
+  errWrong: "hmm, not quite. re-read the long note."
+};
+var GIFT_READY = "2026-05-01T05:00:00+05:30";
+var MSG_BLOB = {
+  salt: "lUy5XBfo4E4tipYCY34Xxw==",
+  iv: "SLpa8swXzz2lBXaY",
+  ct: "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",
+  iter: 600000
+};
+var QR_BLOB = {
+  salt: "V+4FOWj+NJpugte604xYtw==",
+  iv: "pYPHV2V3WnkWmWBS",
+  ct: "nCe4R5hgQPV0QFwzwlbi+ix3WFaI1BFHBGUHM96b4zN4J3kw6Ki3Yl4LpRLWdn4cO+hgxJavHwE6YpQMgQmRBsrXuKYWoITDudUVZ9FKVBtcOPcKfjcdrp6K4IMzZ/fDPOgwp4aACQ==",
   iter: 600000
 };
 function b64decode(s) {
@@ -18,21 +32,21 @@ function b64decode(s) {
     u8[i] = bin.charCodeAt(i);
   return u8;
 }
-async function tryDecrypt(password) {
+async function tryDecrypt(blob, password) {
   const enc = new TextEncoder;
-  const salt = b64decode(GIFT_BLOB.salt);
-  const iv = b64decode(GIFT_BLOB.iv);
-  const ct = b64decode(GIFT_BLOB.ct);
+  const salt = b64decode(blob.salt);
+  const iv = b64decode(blob.iv);
+  const ct = b64decode(blob.ct);
   const baseKey = await crypto.subtle.importKey("raw", enc.encode(password), "PBKDF2", false, ["deriveKey"]);
-  const key = await crypto.subtle.deriveKey({ name: "PBKDF2", salt, iterations: GIFT_BLOB.iter, hash: "SHA-256" }, baseKey, { name: "AES-GCM", length: 256 }, false, ["decrypt"]);
+  const key = await crypto.subtle.deriveKey({ name: "PBKDF2", salt, iterations: blob.iter, hash: "SHA-256" }, baseKey, { name: "AES-GCM", length: 256 }, false, ["decrypt"]);
   const pt = await crypto.subtle.decrypt({ name: "AES-GCM", iv }, key, ct);
-  return JSON.parse(new TextDecoder().decode(pt));
+  return new TextDecoder().decode(pt);
 }
 function useCountdown(iso) {
   const target = useMemo(() => new Date(iso).getTime(), [iso]);
   const [now, setNow] = useState(() => Date.now());
   useEffect(() => {
-    const id = setInterval(() => setNow(Date.now()), 30000);
+    const id = setInterval(() => setNow(Date.now()), 1000);
     return () => clearInterval(id);
   }, []);
   const diff = Math.max(0, target - now);
@@ -40,6 +54,7 @@ function useCountdown(iso) {
     days: Math.floor(diff / 86400000),
     hours: Math.floor(diff % 86400000 / 3600000),
     minutes: Math.floor(diff % 3600000 / 60000),
+    seconds: Math.floor(diff % 60000 / 1000),
     done: diff === 0
   };
 }
@@ -84,17 +99,18 @@ function Confetti({ trigger }) {
     }
   })));
 }
-function Placeholder() {
+function Letter({ text }) {
+  const paragraphs = text.split(/\n+/).map((p) => p.trim()).filter(Boolean);
+  return /* @__PURE__ */ React.createElement("div", {
+    className: "letter"
+  }, paragraphs.map((p, i) => /* @__PURE__ */ React.createElement("p", {
+    key: i,
+    className: "letter-p"
+  }, p)));
+}
+function CountdownBar() {
   const cd = useCountdown(GIFT_READY);
   return /* @__PURE__ */ React.createElement("div", {
-    className: "sheet"
-  }, /* @__PURE__ */ React.createElement("h1", {
-    className: "hello serif"
-  }, "hey ", FRIEND_NAME, /* @__PURE__ */ React.createElement("span", {
-    className: "dot"
-  }, ".")), /* @__PURE__ */ React.createElement("p", {
-    className: "lede"
-  }, "your gift was ", /* @__PURE__ */ React.createElement("em", null, "supposed to be"), " here on the 28th. it'll be here on the 5th. same gift, same love, slightly late paycheck."), /* @__PURE__ */ React.createElement("div", {
     className: "countdown",
     "aria-label": "countdown to gift reveal"
   }, /* @__PURE__ */ React.createElement("div", {
@@ -119,17 +135,21 @@ function Placeholder() {
     className: "cd-num"
   }, String(cd.minutes).padStart(2, "0")), /* @__PURE__ */ React.createElement("span", {
     className: "cd-label"
-  }, "min"))), /* @__PURE__ */ React.createElement("p", {
-    className: "ps"
+  }, "min")), /* @__PURE__ */ React.createElement("span", {
+    className: "cd-sep"
+  }, "·"), /* @__PURE__ */ React.createElement("div", {
+    className: "cd-unit"
   }, /* @__PURE__ */ React.createElement("span", {
-    className: "prefix"
-  }, "p.s."), "there's a password coming. it's in the letter."));
+    className: "cd-num cd-sec"
+  }, String(cd.seconds).padStart(2, "0")), /* @__PURE__ */ React.createElement("span", {
+    className: "cd-label"
+  }, "sec")));
 }
-function Locked({ onUnlock }) {
+function PasswordField({ onSubmit, maxLen = 8 }) {
   const [pw, setPw] = useState("");
-  const [err, setErr] = useState("");
   const [shake, setShake] = useState(false);
   const [busy, setBusy] = useState(false);
+  const [err, setErr] = useState(false);
   const inputRef = useRef(null);
   useEffect(() => {
     inputRef.current?.focus();
@@ -138,32 +158,18 @@ function Locked({ onUnlock }) {
     if (!pw || busy)
       return;
     setBusy(true);
-    setErr("");
     try {
-      const payload = await tryDecrypt(pw);
-      setTimeout(() => onUnlock(payload), 120);
+      await onSubmit(pw);
     } catch {
       setBusy(false);
-      setErr("hmm, not quite. re-read the letter.");
+      setErr(true);
       setShake(true);
       setTimeout(() => setShake(false), 500);
       setTimeout(() => inputRef.current?.select(), 550);
     }
-  }, [pw, busy, onUnlock]);
-  return /* @__PURE__ */ React.createElement("div", {
-    className: "sheet"
-  }, /* @__PURE__ */ React.createElement("h1", {
-    className: "hello serif"
-  }, "okay", /* @__PURE__ */ React.createElement("span", {
-    className: "dot"
-  }, "."), " it's time", /* @__PURE__ */ React.createElement("span", {
-    className: "dot"
-  }, ".")), /* @__PURE__ */ React.createElement("p", {
-    className: "hint"
-  }, PW_HINT, " ", /* @__PURE__ */ React.createElement("span", {
-    className: "fmt"
-  }, "ddmmyyyy")), /* @__PURE__ */ React.createElement("div", {
-    className: "pw-wrap" + (shake ? " shake" : "")
+  }, [pw, busy, onSubmit]);
+  return /* @__PURE__ */ React.createElement(React.Fragment, null, /* @__PURE__ */ React.createElement("div", {
+    className: "pw-wrap" + (shake ? " shake" : "") + (err ? " errored" : "")
   }, /* @__PURE__ */ React.createElement("input", {
     ref: inputRef,
     className: "pw-input",
@@ -172,14 +178,14 @@ function Locked({ onUnlock }) {
     pattern: "[0-9]*",
     autoComplete: "off",
     spellCheck: false,
-    maxLength: 8,
-    placeholder: "••••••••",
+    maxLength: maxLen,
+    placeholder: "•".repeat(maxLen),
     value: pw,
     onChange: (e) => {
-      const clean = e.target.value.replace(/\D/g, "").slice(0, 8);
+      const clean = e.target.value.replace(/\D/g, "").slice(0, maxLen);
       setPw(clean);
       if (err)
-        setErr("");
+        setErr(false);
     },
     onKeyDown: (e) => {
       if (e.key === "Enter")
@@ -224,17 +230,42 @@ function Locked({ onUnlock }) {
     className: "pw-error" + (err ? " show" : ""),
     role: "status",
     "aria-live": "polite"
-  }, err || " "), /* @__PURE__ */ React.createElement("div", {
-    className: "pw-hint-key"
-  }, "press ", /* @__PURE__ */ React.createElement("kbd", null, "return"), " when ready"));
+  }, err ? COPY.errWrong : " "));
 }
-function Unlocked({ payload }) {
+var REVEAL_STEPS = ["₹", "1", "2", "3", "4", "5"];
+var REVEAL_STEP_MS = 1000;
+function RevealSequence({ onDone }) {
+  const [step, setStep] = useState(0);
+  const prefersReduced = useMemo(() => typeof window !== "undefined" && window.matchMedia?.("(prefers-reduced-motion: reduce)").matches, []);
+  useEffect(() => {
+    if (prefersReduced) {
+      onDone?.();
+      return;
+    }
+    if (step >= REVEAL_STEPS.length) {
+      onDone?.();
+      return;
+    }
+    const t = setTimeout(() => setStep((s) => s + 1), REVEAL_STEP_MS);
+    return () => clearTimeout(t);
+  }, [step, prefersReduced, onDone]);
+  if (prefersReduced || step >= REVEAL_STEPS.length)
+    return null;
+  return /* @__PURE__ */ React.createElement("div", {
+    className: "reveal-seq",
+    "aria-hidden": "true"
+  }, /* @__PURE__ */ React.createElement("span", {
+    key: step,
+    className: "reveal-digit"
+  }, REVEAL_STEPS[step]));
+}
+function QrReveal({ payload }) {
   const qrRef = useRef(null);
   const [qrMarkup, setQrMarkup] = useState("");
   useEffect(() => {
-    if (!payload?.qrPayload || !window.qrSvg)
+    if (!payload || !window.qrSvg)
       return;
-    setQrMarkup(window.qrSvg(payload.qrPayload, { size: 320, margin: 3, fg: "#111", bg: "#fff" }));
+    setQrMarkup(window.qrSvg(payload, { size: 320, margin: 3, fg: "#111", bg: "#fff" }));
   }, [payload]);
   const downloadQr = () => {
     const svg = qrRef.current?.querySelector("svg");
@@ -254,7 +285,7 @@ function Unlocked({ payload }) {
       c.toBlob((blob) => {
         const a = document.createElement("a");
         a.href = URL.createObjectURL(blob);
-        a.download = `gift-for-${FRIEND_NAME}.png`;
+        a.download = `gift-for-${COPY.friendName}.png`;
         a.click();
         setTimeout(() => URL.revokeObjectURL(a.href), 2000);
       }, "image/png");
@@ -262,12 +293,8 @@ function Unlocked({ payload }) {
     img.src = svgUrl;
   };
   return /* @__PURE__ */ React.createElement("div", {
-    className: "sheet"
-  }, /* @__PURE__ */ React.createElement("h1", {
-    className: "reveal-head serif"
-  }, "there it is.", /* @__PURE__ */ React.createElement("span", {
-    className: "em"
-  }, "\uD83C\uDF89")), /* @__PURE__ */ React.createElement("div", {
+    className: "qr-reveal"
+  }, /* @__PURE__ */ React.createElement("div", {
     className: "qr-card",
     ref: qrRef
   }, /* @__PURE__ */ React.createElement("div", {
@@ -277,11 +304,7 @@ function Unlocked({ payload }) {
     role: "img"
   })), /* @__PURE__ */ React.createElement("p", {
     className: "gift-meta"
-  }, "for ", /* @__PURE__ */ React.createElement("strong", null, FRIEND_NAME), " · ", /* @__PURE__ */ React.createElement("span", {
-    className: "amount"
-  }, AMOUNT)), /* @__PURE__ */ React.createElement("p", {
-    className: "gift-note"
-  }, CLOSING), /* @__PURE__ */ React.createElement("button", {
+  }, COPY.forLine), /* @__PURE__ */ React.createElement("button", {
     className: "download-btn",
     onClick: downloadQr
   }, /* @__PURE__ */ React.createElement("svg", {
@@ -299,17 +322,109 @@ function Unlocked({ payload }) {
     d: "M5 21h14"
   })), "save image"));
 }
+function WeddingGate({ onUnlock }) {
+  const handleSubmit = useCallback(async (pw) => {
+    const text = await tryDecrypt(MSG_BLOB, pw);
+    onUnlock(text);
+  }, [onUnlock]);
+  return /* @__PURE__ */ React.createElement("div", {
+    className: "sheet"
+  }, /* @__PURE__ */ React.createElement("h1", {
+    className: "hello serif"
+  }, COPY.greetWedding), /* @__PURE__ */ React.createElement(PasswordField, {
+    onSubmit: handleSubmit
+  }), /* @__PURE__ */ React.createElement("p", {
+    className: "hint"
+  }, COPY.hintWedding, " ", /* @__PURE__ */ React.createElement("span", {
+    className: "fmt"
+  }, COPY.fmtWedding)));
+}
+function MessageState({ msg, onCountdownDone }) {
+  const cd = useCountdown(GIFT_READY);
+  useEffect(() => {
+    if (cd.days === 0 && cd.hours === 0 && cd.minutes === 0)
+      onCountdownDone?.();
+  }, [cd.days, cd.hours, cd.minutes, onCountdownDone]);
+  return /* @__PURE__ */ React.createElement("div", {
+    className: "sheet"
+  }, /* @__PURE__ */ React.createElement("h1", {
+    className: "hello serif"
+  }, "hey ", COPY.friendName, /* @__PURE__ */ React.createElement("span", {
+    className: "dot"
+  }, ".")), /* @__PURE__ */ React.createElement(Letter, {
+    text: msg
+  }), /* @__PURE__ */ React.createElement(CountdownBar, null), /* @__PURE__ */ React.createElement("p", {
+    className: "ps"
+  }, /* @__PURE__ */ React.createElement("span", {
+    className: "prefix"
+  }, "p.s."), COPY.psMessage));
+}
+function LockedState({ msg, onUnlock }) {
+  const handleSubmit = useCallback(async (pw) => {
+    const url = await tryDecrypt(QR_BLOB, pw);
+    onUnlock(url);
+  }, [onUnlock]);
+  return /* @__PURE__ */ React.createElement("div", {
+    className: "sheet"
+  }, /* @__PURE__ */ React.createElement("h1", {
+    className: "hello serif"
+  }, "hey ", COPY.friendName, /* @__PURE__ */ React.createElement("span", {
+    className: "dot"
+  }, ".")), /* @__PURE__ */ React.createElement(Letter, {
+    text: msg
+  }), /* @__PURE__ */ React.createElement(PasswordField, {
+    onSubmit: handleSubmit
+  }), /* @__PURE__ */ React.createElement("p", {
+    className: "hint"
+  }, COPY.hintGift, " ", /* @__PURE__ */ React.createElement("span", {
+    className: "fmt"
+  }, COPY.fmtGift)));
+}
+function UnlockedState({ msg, qrUrl, onRevealed }) {
+  const [revealed, setRevealed] = useState(false);
+  const handleDone = useCallback(() => {
+    setRevealed(true);
+    onRevealed?.();
+  }, [onRevealed]);
+  return /* @__PURE__ */ React.createElement("div", {
+    className: "sheet"
+  }, /* @__PURE__ */ React.createElement("h1", {
+    className: "hello serif"
+  }, "hey ", COPY.friendName, /* @__PURE__ */ React.createElement("span", {
+    className: "dot"
+  }, ".")), /* @__PURE__ */ React.createElement(Letter, {
+    text: msg
+  }), revealed ? /* @__PURE__ */ React.createElement(QrReveal, {
+    payload: qrUrl
+  }) : /* @__PURE__ */ React.createElement(RevealSequence, {
+    onDone: handleDone
+  }), /* @__PURE__ */ React.createElement("p", {
+    className: "ps"
+  }, /* @__PURE__ */ React.createElement("span", {
+    className: "prefix"
+  }, "p.s."), COPY.psUnlocked));
+}
 function App() {
-  const initialState = useMemo(() => {
-    return Date.now() >= new Date(GIFT_READY).getTime() ? "locked" : "placeholder";
-  }, []);
-  const [state, setState] = useState(initialState);
-  const [payload, setPayload] = useState(null);
+  const [state, setState] = useState("weddingGate");
+  const [msg, setMsg] = useState(null);
+  const [qrUrl, setQrUrl] = useState(null);
   const [fireConfetti, setFireConfetti] = useState(0);
-  const handleUnlock = useCallback((p) => {
-    setPayload(p);
+  const pickPostWedding = useCallback(() => {
+    return Date.now() >= new Date(GIFT_READY).getTime() ? "locked" : "message";
+  }, []);
+  const onWeddingUnlock = useCallback((text) => {
+    setMsg(text);
+    setState(pickPostWedding());
+  }, [pickPostWedding]);
+  const onGiftUnlock = useCallback((url) => {
+    setQrUrl(url);
     setState("unlocked");
+  }, []);
+  const onRevealed = useCallback(() => {
     setFireConfetti((n) => n + 1);
+  }, []);
+  const onCountdownDone = useCallback(() => {
+    setState("locked");
   }, []);
   return /* @__PURE__ */ React.createElement("div", {
     "data-accent": "terracotta"
@@ -318,10 +433,18 @@ function App() {
   }, /* @__PURE__ */ React.createElement("div", {
     className: "state-layer idle",
     key: state
-  }, state === "placeholder" && /* @__PURE__ */ React.createElement(Placeholder, null), state === "locked" && /* @__PURE__ */ React.createElement(Locked, {
-    onUnlock: handleUnlock
-  }), state === "unlocked" && payload && /* @__PURE__ */ React.createElement(Unlocked, {
-    payload
+  }, state === "weddingGate" && /* @__PURE__ */ React.createElement(WeddingGate, {
+    onUnlock: onWeddingUnlock
+  }), state === "message" && /* @__PURE__ */ React.createElement(MessageState, {
+    msg,
+    onCountdownDone
+  }), state === "locked" && /* @__PURE__ */ React.createElement(LockedState, {
+    msg,
+    onUnlock: onGiftUnlock
+  }), state === "unlocked" && qrUrl && /* @__PURE__ */ React.createElement(UnlockedState, {
+    msg,
+    qrUrl,
+    onRevealed
   }))), state !== "unlocked" && /* @__PURE__ */ React.createElement("div", {
     className: "seal",
     "aria-hidden": "true"

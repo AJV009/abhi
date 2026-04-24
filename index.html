@@ -103,6 +103,22 @@
     font-variation-settings: "opsz" 14;
   }
 
+  .letter {
+    margin: 0 0 40px;
+  }
+  .letter-p {
+    font-family: "Fraunces", serif;
+    font-weight: 400;
+    font-size: clamp(17px, 3.4vw, 19px);
+    line-height: 1.6;
+    color: var(--ink-soft);
+    letter-spacing: -0.005em;
+    max-width: 58ch;
+    text-wrap: pretty;
+    margin: 0 0 18px;
+  }
+  .letter-p:last-child { margin-bottom: 0; }
+
   .ps {
     font-family: "Homemade Apple", cursive;
     font-size: clamp(17px, 3.2vw, 20px);
@@ -130,19 +146,20 @@
   .countdown {
     display: inline-flex;
     align-items: baseline;
-    gap: 18px;
+    gap: 12px;
     border-top: 1px solid var(--rule);
     border-bottom: 1px solid var(--rule);
     margin: 0 0 40px;
     width: 100%;
     justify-content: flex-start;
     padding: 18px 0;
+    flex-wrap: wrap;
   }
-  .cd-unit { display: flex; align-items: baseline; gap: 8px; }
+  .cd-unit { display: flex; align-items: baseline; gap: 6px; }
   .cd-num {
     font-family: "Fraunces", serif;
     font-weight: 400;
-    font-size: clamp(38px, 8vw, 56px);
+    font-size: clamp(30px, 7vw, 48px);
     line-height: 1;
     color: var(--ink);
     letter-spacing: -0.02em;
@@ -150,11 +167,14 @@
     font-feature-settings: "tnum";
     min-width: 2ch;
     text-align: right;
-    transition: transform .35s cubic-bezier(.2,.7,.2,1);
+  }
+  .cd-num.cd-sec {
+    color: var(--accent);
+    font-weight: 300;
   }
   .cd-label {
     font-family: "Inter", sans-serif;
-    font-size: 12px;
+    font-size: 11px;
     font-weight: 500;
     color: var(--ink-mute);
     text-transform: uppercase;
@@ -163,7 +183,7 @@
   .cd-sep {
     color: var(--rule);
     font-family: "Fraunces", serif;
-    font-size: clamp(34px, 7vw, 48px);
+    font-size: clamp(26px, 6vw, 40px);
     font-weight: 300;
     line-height: 1;
     align-self: center;
@@ -290,16 +310,44 @@
     color: var(--ink-soft);
   }
 
-  .reveal-head {
+  .reveal-seq {
+    display: grid;
+    place-items: center;
+    min-height: clamp(240px, 70vw, 320px);
+    margin: 0 0 28px;
+  }
+  .reveal-digit {
     font-family: "Fraunces", serif;
     font-weight: 300;
-    font-size: clamp(44px, 10vw, 72px);
+    font-size: clamp(120px, 30vw, 180px);
     line-height: 1;
-    letter-spacing: -0.03em;
-    margin: 0 0 36px;
-    color: var(--ink);
+    letter-spacing: -0.04em;
+    color: var(--accent);
+    font-variation-settings: "opsz" 144;
+    animation: revealFlash 1000ms cubic-bezier(.5, 0, .5, 1) forwards;
+    font-variant-numeric: tabular-nums;
   }
-  .reveal-head .em { display: inline-block; margin-left: 4px; }
+  @keyframes revealFlash {
+    0%   { opacity: 0; transform: scale(0.88); }
+    20%  { opacity: 1; transform: scale(1); }
+    80%  { opacity: 1; transform: scale(1); }
+    100% { opacity: 0; transform: scale(1.06); }
+  }
+  @media (prefers-reduced-motion: reduce) {
+    .reveal-digit { animation: none; opacity: 1; }
+  }
+
+  .qr-reveal {
+    margin: 0 0 28px;
+    animation: qrFadeIn 500ms ease-out;
+  }
+  @keyframes qrFadeIn {
+    from { opacity: 0; transform: translateY(6px); }
+    to   { opacity: 1; transform: translateY(0); }
+  }
+  @media (prefers-reduced-motion: reduce) {
+    .qr-reveal { animation: none; }
+  }
 
   .qr-card {
     background: #fff;
@@ -329,28 +377,10 @@
     font-family: "Fraunces", serif;
     font-size: clamp(20px, 4.2vw, 24px);
     line-height: 1.45;
-    color: var(--ink-soft);
+    color: var(--ink);
     margin: 0 0 8px;
     letter-spacing: -0.012em;
-  }
-  .gift-meta strong {
-    color: var(--ink);
     font-weight: 500;
-  }
-  .gift-meta .amount {
-    color: var(--accent);
-    font-weight: 500;
-  }
-
-  .gift-note {
-    font-family: "Fraunces", serif;
-    font-style: italic;
-    font-size: clamp(17px, 3.6vw, 20px);
-    line-height: 1.5;
-    color: var(--ink-soft);
-    max-width: 30ch;
-    margin: 18px 0 36px;
-    text-wrap: pretty;
   }
 
   .download-btn {
