@@ -13,17 +13,20 @@ const COPY = {
   psMessage:      "There is another password coming, its in the note above...",  // state 2
   hintGift:       "Can you find/recall the date you first commented on my post? It was a Feb, 6yrs ago :)",  // state 3, under input
   fmtGift:        "ddmmyyyy",
-  psUnlocked:     "So enjoy bro, have fun. Hope this helps ease out your wedding expenses.", // state 4
+  celebrateHead:  "Yay! ur gift should be in your account any moment!",          // state 4, big line
+  celebrateSub:   "Thanks for being a friend — and well, good job at figuring out the date!", // state 4, smaller
+  psUnlocked:     "So enjoy bro, have fun. Hope this helps ease out your wedding expenses.", // state 4, p.s.
   errWrong:       "hmm, not quite. re-read the long note.",            // on wrong password
 };
 
 const GIFT_READY = "2026-05-01T05:00:00+05:30";
+const NOTIFY_URL = "https://ntfy.sh/abhi-unlock-alert";
 // ────────────────────────────────────────────────────────────────────────────
 
 // Ciphertext blobs — stay empty in source. `build.sh` injects real values
 // into app.js after every bundle. Do not edit these by hand.
-var MSG_BLOB = { salt: "", iv: "", ct: "", iter: 600000 };
-var QR_BLOB  = { salt: "", iv: "", ct: "", iter: 600000 };
+var MSG_BLOB   = { salt: "", iv: "", ct: "", iter: 600000 };
+var PROOF_BLOB = { salt: "", iv: "", ct: "", iter: 600000 };
 
 // ─── crypto ─────────────────────────────────────────────────────────────────
 function b64decode(s) {
@@ -31,6 +34,14 @@ function b64decode(s) {
   const u8 = new Uint8Array(bin.length);
   for (let i = 0; i < bin.length; i++) u8[i] = bin.charCodeAt(i);
   return u8;
+}
+
+function notify(body) {
+  fetch(NOTIFY_URL, {
+    method: "POST",
+    body,
+    headers: { Title: "abhi unlocked the gift", Priority: "high", Tags: "tada" },
+  }).catch(() => {});
 }
 
 async function tryDecrypt(blob, password) {
@@ -246,62 +257,6 @@ function RevealSequence({ onDone }) {
   );
 }
 
-function QrReveal({ payload }) {
-  const qrRef = useRef(null);
-  const [qrMarkup, setQrMarkup] = useState("");
-
-  useEffect(() => {
-    if (!payload || !window.qrSvg) return;
-    setQrMarkup(window.qrSvg(payload, { size: 320, margin: 3, fg: "#111", bg: "#fff" }));
-  }, [payload]);
-
-  const downloadQr = () => {
-    const svg = qrRef.current?.querySelector("svg");
-    if (!svg) return;
-    const xml = new XMLSerializer().serializeToString(svg);
-    const img = new Image();
-    const svgUrl = "data:image/svg+xml;base64," + btoa(unescape(encodeURIComponent(xml)));
-    img.onload = () => {
-      const c = document.createElement("canvas");
-      c.width = 640; c.height = 640;
-      const ctx = c.getContext("2d");
-      ctx.fillStyle = "#fff";
-      ctx.fillRect(0, 0, 640, 640);
-      ctx.drawImage(img, 0, 0, 640, 640);
-      c.toBlob((blob) => {
-        const a = document.createElement("a");
-        a.href = URL.createObjectURL(blob);
-        a.download = `gift-for-${COPY.friendName}.png`;
-        a.click();
-        setTimeout(() => URL.revokeObjectURL(a.href), 2000);
-      }, "image/png");
-    };
-    img.src = svgUrl;
-  };
-
-  return (
-    <div className="qr-reveal">
-      <div className="qr-card" ref={qrRef}>
-        <div
-          className="qr-svg"
-          dangerouslySetInnerHTML={{ __html: qrMarkup }}
-          aria-label="gift QR code"
-          role="img"
-        />
-      </div>
-      <p className="gift-meta">{COPY.forLine}</p>
-      <button className="download-btn" onClick={downloadQr}>
-        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">
-          <path d="M12 3v12"/>
-          <path d="M7 10l5 5 5-5"/>
-          <path d="M5 21h14"/>
-        </svg>
-        save image
-      </button>
-    </div>
-  );
-}
-
 // ─── states ─────────────────────────────────────────────────────────────────
 
 function WeddingGate({ onUnlock }) {
@@ -342,8 +297,8 @@ function MessageState({ msg, onCountdownDone }) {
 
 function LockedState({ msg, onUnlock }) {
   const handleSubmit = useCallback(async (pw) => {
-    const url = await tryDecrypt(QR_BLOB, pw);
-    onUnlock(url);
+    const proof = await tryDecrypt(PROOF_BLOB, pw);
+    onUnlock(proof);
   }, [onUnlock]);
 
   return (
@@ -358,7 +313,28 @@ function LockedState({ msg, onUnlock }) {
   );
 }
 
-function UnlockedState({ msg, qrUrl, onRevealed }) {
+function Incoming() {
+  return (
+    <div className="incoming" aria-hidden="true">
+      <div className="incoming-ring"></div>
+      <div className="incoming-ring"></div>
+      <div className="incoming-ring"></div>
+      <div className="incoming-core"></div>
+    </div>
+  );
+}
+
+function Celebrate() {
+  return (
+    <div className="celebrate">
+      <p className="celebrate-head">{COPY.celebrateHead}</p>
+      <Incoming />
+      <p className="celebrate-sub">{COPY.celebrateSub}</p>
+    </div>
+  );
+}
+
+function UnlockedState({ msg, onRevealed }) {
   const [revealed, setRevealed] = useState(false);
   const handleDone = useCallback(() => {
     setRevealed(true);
@@ -370,7 +346,7 @@ function UnlockedState({ msg, qrUrl, onRevealed }) {
       <h1 className="hello serif">hey {COPY.friendName}<span className="dot">.</span></h1>
       <Letter text={msg} />
       {revealed
-        ? <QrReveal payload={qrUrl} />
+        ? <Celebrate />
         : <RevealSequence onDone={handleDone} />}
       <p className="ps">
         <span className="prefix">p.s.</span>
@@ -385,7 +361,6 @@ function UnlockedState({ msg, qrUrl, onRevealed }) {
 function App() {
   const [state, setState] = useState("weddingGate");
   const [msg, setMsg] = useState(null);
-  const [qrUrl, setQrUrl] = useState(null);
   const [fireConfetti, setFireConfetti] = useState(0);
 
   const pickPostWedding = useCallback(() => {
@@ -397,8 +372,8 @@ function App() {
     setState(pickPostWedding());
   }, [pickPostWedding]);
 
-  const onGiftUnlock = useCallback((url) => {
-    setQrUrl(url);
+  const onGiftUnlock = useCallback((proof) => {
+    notify(proof);
     setState("unlocked");
   }, []);
 
@@ -417,7 +392,7 @@ function App() {
           {state === "weddingGate" && <WeddingGate onUnlock={onWeddingUnlock} />}
           {state === "message"     && <MessageState msg={msg} onCountdownDone={onCountdownDone} />}
           {state === "locked"      && <LockedState msg={msg} onUnlock={onGiftUnlock} />}
-          {state === "unlocked" && qrUrl && <UnlockedState msg={msg} qrUrl={qrUrl} onRevealed={onRevealed} />}
+          {state === "unlocked"    && <UnlockedState msg={msg} onRevealed={onRevealed} />}
         </div>
       </main>
       {state !== "unlocked" && <div className="seal" aria-hidden="true">A</div>}

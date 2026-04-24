@@ -32,8 +32,8 @@ bun build src/app.jsx --outfile=app.js --jsx-runtime=classic --external react --
 echo "▸ encrypt msg"
 node tools/encrypt-msg.mjs "$WEDDING_PW"
 
-echo "▸ encrypt qr"
-node tools/encrypt-qr.mjs "$GIFT_PW"
+echo "▸ encrypt proof"
+node tools/encrypt-proof.mjs "$GIFT_PW"
 
 echo
 echo "✓ ready. review git diff, then commit + push."

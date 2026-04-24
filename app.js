@@ -9,20 +9,23 @@ var COPY = {
   psMessage: "There is another password coming, its in the note above...",
   hintGift: "Can you find/recall the date you first commented on my post? It was a Feb, 6yrs ago :)",
   fmtGift: "ddmmyyyy",
+  celebrateHead: "Yay! ur gift should be in your account any moment!",
+  celebrateSub: "Thanks for being a friend — and well, good job at figuring out the date!",
   psUnlocked: "So enjoy bro, have fun. Hope this helps ease out your wedding expenses.",
   errWrong: "hmm, not quite. re-read the long note."
 };
 var GIFT_READY = "2026-05-01T05:00:00+05:30";
+var NOTIFY_URL = "https://ntfy.sh/abhi-unlock-alert";
 var MSG_BLOB = {
-  salt: "Y0xOxpWNUCrAJUUlbxBwfQ==",
-  iv: "2qXcry4+58i6qdHw",
-  ct: "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",
+  salt: "VXcXY6J2ZAZosjI+7QNRUA==",
+  iv: "5F5te6EBnu2kFZPu",
+  ct: "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",
   iter: 600000
 };
-var QR_BLOB = {
-  salt: "MCSTcIh+Wk5Yc/FB6E+Q7w==",
-  iv: "Bm+uKiMF8/0G9Xls",
-  ct: "d8hWWv1sOpyZ/2kpuZomYl4RmUuM2Xwt/OEYxjiWNRapsk2sdFA0CLIqba3KcFx6oHuds1hIMpTzybscBsS+qDeK8MSbDnQ9F0RuTL8VvrNh5eUBmUFGuvjOHyRlhyr4dSY/QkYiNQ==",
+var PROOF_BLOB = {
+  salt: "CSIEfkSSoDMnK9p2uk/uMA==",
+  iv: "IKQXNvASt45AlaH8",
+  ct: "uCCtJIUCtrBW7w+FGd2I3cagbOpkdjH3cA17/XVLDN0vHN50Dd2492xjrOgyrVxy",
   iter: 600000
 };
 function b64decode(s) {
@@ -31,6 +34,13 @@ function b64decode(s) {
   for (let i = 0;i < bin.length; i++)
     u8[i] = bin.charCodeAt(i);
   return u8;
+}
+function notify(body) {
+  fetch(NOTIFY_URL, {
+    method: "POST",
+    body,
+    headers: { Title: "abhi unlocked the gift", Priority: "high", Tags: "tada" }
+  }).catch(() => {});
 }
 async function tryDecrypt(blob, password) {
   const enc = new TextEncoder;
@@ -259,69 +269,6 @@ function RevealSequence({ onDone }) {
     className: "reveal-digit"
   }, REVEAL_STEPS[step]));
 }
-function QrReveal({ payload }) {
-  const qrRef = useRef(null);
-  const [qrMarkup, setQrMarkup] = useState("");
-  useEffect(() => {
-    if (!payload || !window.qrSvg)
-      return;
-    setQrMarkup(window.qrSvg(payload, { size: 320, margin: 3, fg: "#111", bg: "#fff" }));
-  }, [payload]);
-  const downloadQr = () => {
-    const svg = qrRef.current?.querySelector("svg");
-    if (!svg)
-      return;
-    const xml = new XMLSerializer().serializeToString(svg);
-    const img = new Image;
-    const svgUrl = "data:image/svg+xml;base64," + btoa(unescape(encodeURIComponent(xml)));
-    img.onload = () => {
-      const c = document.createElement("canvas");
-      c.width = 640;
-      c.height = 640;
-      const ctx = c.getContext("2d");
-      ctx.fillStyle = "#fff";
-      ctx.fillRect(0, 0, 640, 640);
-      ctx.drawImage(img, 0, 0, 640, 640);
-      c.toBlob((blob) => {
-        const a = document.createElement("a");
-        a.href = URL.createObjectURL(blob);
-        a.download = `gift-for-${COPY.friendName}.png`;
-        a.click();
-        setTimeout(() => URL.revokeObjectURL(a.href), 2000);
-      }, "image/png");
-    };
-    img.src = svgUrl;
-  };
-  return /* @__PURE__ */ React.createElement("div", {
-    className: "qr-reveal"
-  }, /* @__PURE__ */ React.createElement("div", {
-    className: "qr-card",
-    ref: qrRef
-  }, /* @__PURE__ */ React.createElement("div", {
-    className: "qr-svg",
-    dangerouslySetInnerHTML: { __html: qrMarkup },
-    "aria-label": "gift QR code",
-    role: "img"
-  })), /* @__PURE__ */ React.createElement("p", {
-    className: "gift-meta"
-  }, COPY.forLine), /* @__PURE__ */ React.createElement("button", {
-    className: "download-btn",
-    onClick: downloadQr
-  }, /* @__PURE__ */ React.createElement("svg", {
-    viewBox: "0 0 24 24",
-    fill: "none",
-    stroke: "currentColor",
-    strokeWidth: "1.8",
-    strokeLinecap: "round",
-    strokeLinejoin: "round"
-  }, /* @__PURE__ */ React.createElement("path", {
-    d: "M12 3v12"
-  }), /* @__PURE__ */ React.createElement("path", {
-    d: "M7 10l5 5 5-5"
-  }), /* @__PURE__ */ React.createElement("path", {
-    d: "M5 21h14"
-  })), "save image"));
-}
 function WeddingGate({ onUnlock }) {
   const handleSubmit = useCallback(async (pw) => {
     const text = await tryDecrypt(MSG_BLOB, pw);
@@ -361,8 +308,8 @@ function MessageState({ msg, onCountdownDone }) {
 }
 function LockedState({ msg, onUnlock }) {
   const handleSubmit = useCallback(async (pw) => {
-    const url = await tryDecrypt(QR_BLOB, pw);
-    onUnlock(url);
+    const proof = await tryDecrypt(PROOF_BLOB, pw);
+    onUnlock(proof);
   }, [onUnlock]);
   return /* @__PURE__ */ React.createElement("div", {
     className: "sheet"
@@ -380,7 +327,30 @@ function LockedState({ msg, onUnlock }) {
     className: "fmt"
   }, COPY.fmtGift)));
 }
-function UnlockedState({ msg, qrUrl, onRevealed }) {
+function Incoming() {
+  return /* @__PURE__ */ React.createElement("div", {
+    className: "incoming",
+    "aria-hidden": "true"
+  }, /* @__PURE__ */ React.createElement("div", {
+    className: "incoming-ring"
+  }), /* @__PURE__ */ React.createElement("div", {
+    className: "incoming-ring"
+  }), /* @__PURE__ */ React.createElement("div", {
+    className: "incoming-ring"
+  }), /* @__PURE__ */ React.createElement("div", {
+    className: "incoming-core"
+  }));
+}
+function Celebrate() {
+  return /* @__PURE__ */ React.createElement("div", {
+    className: "celebrate"
+  }, /* @__PURE__ */ React.createElement("p", {
+    className: "celebrate-head"
+  }, COPY.celebrateHead), /* @__PURE__ */ React.createElement(Incoming, null), /* @__PURE__ */ React.createElement("p", {
+    className: "celebrate-sub"
+  }, COPY.celebrateSub));
+}
+function UnlockedState({ msg, onRevealed }) {
   const [revealed, setRevealed] = useState(false);
   const handleDone = useCallback(() => {
     setRevealed(true);
@@ -394,9 +364,7 @@ function UnlockedState({ msg, qrUrl, onRevealed }) {
     className: "dot"
   }, ".")), /* @__PURE__ */ React.createElement(Letter, {
     text: msg
-  }), revealed ? /* @__PURE__ */ React.createElement(QrReveal, {
-    payload: qrUrl
-  }) : /* @__PURE__ */ React.createElement(RevealSequence, {
+  }), revealed ? /* @__PURE__ */ React.createElement(Celebrate, null) : /* @__PURE__ */ React.createElement(RevealSequence, {
     onDone: handleDone
   }), /* @__PURE__ */ React.createElement("p", {
     className: "ps"
@@ -407,7 +375,6 @@ function UnlockedState({ msg, qrUrl, onRevealed }) {
 function App() {
   const [state, setState] = useState("weddingGate");
   const [msg, setMsg] = useState(null);
-  const [qrUrl, setQrUrl] = useState(null);
   const [fireConfetti, setFireConfetti] = useState(0);
   const pickPostWedding = useCallback(() => {
     return Date.now() >= new Date(GIFT_READY).getTime() ? "locked" : "message";
@@ -416,8 +383,8 @@ function App() {
     setMsg(text);
     setState(pickPostWedding());
   }, [pickPostWedding]);
-  const onGiftUnlock = useCallback((url) => {
-    setQrUrl(url);
+  const onGiftUnlock = useCallback((proof) => {
+    notify(proof);
     setState("unlocked");
   }, []);
   const onRevealed = useCallback(() => {
@@ -441,9 +408,8 @@ function App() {
   }), state === "locked" && /* @__PURE__ */ React.createElement(LockedState, {
     msg,
     onUnlock: onGiftUnlock
-  }), state === "unlocked" && qrUrl && /* @__PURE__ */ React.createElement(UnlockedState, {
+  }), state === "unlocked" && /* @__PURE__ */ React.createElement(UnlockedState, {
     msg,
-    qrUrl,
     onRevealed
   }))), state !== "unlocked" && /* @__PURE__ */ React.createElement("div", {
     className: "seal",
