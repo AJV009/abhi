@@ -14,7 +14,6 @@ const COPY = {
   hintGift:       "Can you find/recall the date you first commented on my post? It was a Feb, 6yrs ago :)",  // state 3, under input
   fmtGift:        "ddmmyyyy",
   celebrateHead:  "Yay! ur gift should be in your account any moment!",          // state 4, big line
-  celebrateSub:   "Thanks for being a friend — and well, good job at figuring out the date!", // state 4, smaller
   psUnlocked:     "So enjoy bro, have fun. Hope this helps ease out your wedding expenses.", // state 4, p.s.
   errWrong:       "hmm, not quite. re-read the long note.",            // on wrong password
 };
@@ -166,7 +165,7 @@ function PasswordField({ onSubmit, maxLen = 8 }) {
   const [err, setErr] = useState(false);
   const inputRef = useRef(null);
 
-  useEffect(() => { inputRef.current?.focus(); }, []);
+  useEffect(() => { inputRef.current?.focus({ preventScroll: true }); }, []);
 
   const submit = useCallback(async () => {
     if (!pw || busy) return;
@@ -314,13 +313,19 @@ function LockedState({ msg, onUnlock }) {
 }
 
 function Incoming() {
+  const rotations = [0, 45, 90, 135, 180, 225, 270, 315];
   return (
-    <div className="incoming" aria-hidden="true">
-      <div className="incoming-ring"></div>
-      <div className="incoming-ring"></div>
-      <div className="incoming-ring"></div>
-      <div className="incoming-core"></div>
-    </div>
+    <svg className="incoming" viewBox="0 0 180 180" aria-hidden="true" xmlns="http://www.w3.org/2000/svg">
+      {rotations.map((r) => (
+        <ellipse
+          key={r}
+          className="incoming-petal"
+          cx="90" cy="50" rx="12" ry="22"
+          style={{ "--r": `${r}deg`, "--d": `${r / 360 * 0.4}s` }}
+        />
+      ))}
+      <circle className="incoming-center" cx="90" cy="90" r="14"/>
+    </svg>
   );
 }
 
@@ -329,7 +334,40 @@ function Celebrate() {
     <div className="celebrate">
       <p className="celebrate-head">{COPY.celebrateHead}</p>
       <Incoming />
-      <p className="celebrate-sub">{COPY.celebrateSub}</p>
+    </div>
+  );
+}
+
+function HeartsBackground() {
+  const hearts = useMemo(() => {
+    const arr = [];
+    for (let i = 0; i < 28; i++) {
+      arr.push({
+        x:     Math.random() * 100,
+        s:     10 + Math.random() * 9,
+        d:     Math.random() * 14,
+        size:  10 + Math.random() * 9,
+        drift: -28 + Math.random() * 56,
+        peak:  0.09 + Math.random() * 0.09,
+      });
+    }
+    return arr;
+  }, []);
+
+  return (
+    <div className="hearts-bg" aria-hidden="true">
+      {hearts.map((h, i) => (
+        <svg key={i} viewBox="0 0 42 38" xmlns="http://www.w3.org/2000/svg" style={{
+          left: `${h.x}%`,
+          width: `${h.size}px`,
+          "--s": `${h.s}s`,
+          "--d": `-${h.d}s`,
+          "--drift": h.drift,
+          "--peak": h.peak,
+        }}>
+          <path d="M21 35 C21 35 3 23 3 13 C3 7 8 3 13 3 C17 3 19 5 21 8 C23 5 25 3 29 3 C34 3 39 7 39 13 C39 23 21 35 21 35 Z" fill="currentColor"/>
+        </svg>
+      ))}
     </div>
   );
 }
@@ -387,6 +425,7 @@ function App() {
 
   return (
     <div data-accent="terracotta">
+      <HeartsBackground />
       <main className="page">
         <div className="state-layer idle" key={state}>
           {state === "weddingGate" && <WeddingGate onUnlock={onWeddingUnlock} />}
