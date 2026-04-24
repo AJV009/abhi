@@ -6,7 +6,7 @@ const COPY = {
   friendName:     "abhi",
   forLine:        "for Abhi & Sanjeeveni",
 
-  greetWedding:   "so... wedding aye?",
+  greetWedding:   "so... wedding eh?",
   hintWedding:    "Obviously your day!",              // state 1, under input
   fmtWedding:     "ddmmyyyy",                         // pill next to hint
 
