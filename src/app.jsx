@@ -122,11 +122,20 @@ function Confetti({ trigger }) {
 }
 
 // ─── shared bits ────────────────────────────────────────────────────────────
+function renderInline(text) {
+  const parts = text.split(/(~~[^~]+~~)/g);
+  return parts.map((part, i) =>
+    part.startsWith("~~") && part.endsWith("~~")
+      ? <s key={i}>{part.slice(2, -2)}</s>
+      : part
+  );
+}
+
 function Letter({ text }) {
   const paragraphs = text.split(/\n+/).map(p => p.trim()).filter(Boolean);
   return (
     <div className="letter">
-      {paragraphs.map((p, i) => <p key={i} className="letter-p">{p}</p>)}
+      {paragraphs.map((p, i) => <p key={i} className="letter-p">{renderInline(p)}</p>)}
     </div>
   );
 }
