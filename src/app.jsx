@@ -10,11 +10,11 @@ const COPY = {
   hintWedding:    "Obviously your day!",              // state 1, under input
   fmtWedding:     "ddmmyyyy",                         // pill next to hint
 
-  psMessage:      "There is another password coming, its in the note above...",  // state 2
+  psMessage:      "Come back to this page after the above timer hits zero, there is another password coming, its in the note above...",  // state 2
   hintGift:       "Can you find/recall the date you first commented on my post? It was a Feb, 6yrs ago :)",  // state 3, under input
   fmtGift:        "ddmmyyyy",
   celebrateHead:  "Yay! ur gift should be in your account any moment!",          // state 4, big line
-  psUnlocked:     "So enjoy bro, have fun. Hope this helps ease out your wedding expenses.", // state 4, p.s.
+  psUnlocked:     "So enjoy bro, have fun. Hope this helps ease out your wedding expenses I couldn't think of a better gift than helping financially. I have always known how expensive these weddings can be!", // state 4, p.s.
   errWrong:       "hmm, not quite. re-read the long note.",            // on wrong password
 };
 
