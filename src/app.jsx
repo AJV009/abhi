@@ -306,7 +306,7 @@ function MessageState({ msg, onCountdownDone }) {
 function LockedState({ msg, onUnlock }) {
   const handleSubmit = useCallback(async (pw) => {
     const proof = await tryDecrypt(PROOF_BLOB, pw);
-    onUnlock(proof);
+    onUnlock(proof, pw);
   }, [onUnlock]);
 
   return (
@@ -381,7 +381,51 @@ function HeartsBackground() {
   );
 }
 
-function UnlockedState({ msg, onRevealed }) {
+function PhotosBackground({ pics }) {
+  const items = useMemo(() => {
+    if (!pics || pics.length === 0) return [];
+    const arr = [];
+    for (let i = 0; i < 14; i++) {
+      const w = 110 + Math.random() * 70;
+      const h = w * (1.15 + Math.random() * 0.25);
+      arr.push({
+        src:   pics[Math.floor(Math.random() * pics.length)],
+        x:     Math.random() * 100,
+        s:     22 + Math.random() * 14,
+        d:     Math.random() * 30,
+        w, h,
+        drift: -60 + Math.random() * 120,
+        peak:  0.92 + Math.random() * 0.08,
+        r0:    -14 + Math.random() * 28,
+        r1:    -10 + Math.random() * 20,
+      });
+    }
+    return arr;
+  }, [pics]);
+
+  return (
+    <div className="photos-bg" aria-hidden="true">
+      <div className="veil-text" />
+      {items.map((p, i) => (
+        <div key={i} className="pic" style={{
+          left: `${p.x}%`,
+          "--w": `${p.w}px`,
+          "--h": `${p.h}px`,
+          "--s": `${p.s}s`,
+          "--d": `-${p.d}s`,
+          "--drift": p.drift,
+          "--peak": p.peak,
+          "--r0": `${p.r0}deg`,
+          "--r1": `${p.r1}deg`,
+        }}>
+          <img src={p.src} alt="" loading="lazy" />
+        </div>
+      ))}
+    </div>
+  );
+}
+
+function UnlockedState({ msg, pics, onRevealed }) {
   const [revealed, setRevealed] = useState(false);
   const handleDone = useCallback(() => {
     setRevealed(true);
@@ -389,6 +433,8 @@ function UnlockedState({ msg, onRevealed }) {
   }, [onRevealed]);
 
   return (
+    <>
+    {pics && pics.length > 0 && <PhotosBackground pics={pics} />}
     <div className="sheet">
       <h1 className="hello serif">hey {COPY.friendName}<span className="dot">.</span></h1>
       <Letter text={msg} />
@@ -400,14 +446,28 @@ function UnlockedState({ msg, onRevealed }) {
         {COPY.psUnlocked}
       </p>
     </div>
+    </>
   );
 }
 
 // ─── app shell ──────────────────────────────────────────────────────────────
 
+async function loadPics(password) {
+  try {
+    const res = await fetch("pics.blob");
+    if (!res.ok) return [];
+    const blob = await res.json();
+    const json = await tryDecrypt(blob, password);
+    return JSON.parse(json);
+  } catch {
+    return [];
+  }
+}
+
 function App() {
   const [state, setState] = useState("weddingGate");
   const [msg, setMsg] = useState(null);
+  const [pics, setPics] = useState([]);
   const [fireConfetti, setFireConfetti] = useState(0);
 
   const pickPostWedding = useCallback(() => {
@@ -419,9 +479,10 @@ function App() {
     setState(pickPostWedding());
   }, [pickPostWedding]);
 
-  const onGiftUnlock = useCallback((proof) => {
+  const onGiftUnlock = useCallback((proof, pw) => {
     notify(proof);
     setState("unlocked");
+    loadPics(pw).then(setPics);
   }, []);
 
   const onRevealed = useCallback(() => {
@@ -433,14 +494,14 @@ function App() {
   }, []);
 
   return (
-    <div data-accent="terracotta">
-      <HeartsBackground />
+    <div data-accent="terracotta" className={state === "unlocked" ? "photos-mode" : ""}>
+      {state !== "unlocked" && <HeartsBackground />}
       <main className="page">
         <div className="state-layer idle" key={state}>
           {state === "weddingGate" && <WeddingGate onUnlock={onWeddingUnlock} />}
           {state === "message"     && <MessageState msg={msg} onCountdownDone={onCountdownDone} />}
           {state === "locked"      && <LockedState msg={msg} onUnlock={onGiftUnlock} />}
-          {state === "unlocked"    && <UnlockedState msg={msg} onRevealed={onRevealed} />}
+          {state === "unlocked"    && <UnlockedState msg={msg} pics={pics} onRevealed={onRevealed} />}
         </div>
       </main>
       {state !== "unlocked" && <div className="seal" aria-hidden="true">A</div>}

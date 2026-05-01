@@ -26,6 +26,9 @@ if [ -z "$WEDDING_PW" ] || [ -z "$GIFT_PW" ]; then
   exit 1
 fi
 
+echo "▸ compress pics"
+node tools/compress-pics.mjs
+
 echo "▸ build"
 bun build src/app.jsx --outfile=app.js --jsx-runtime=classic --external react --external react-dom
 
@@ -34,6 +37,9 @@ node tools/encrypt-msg.mjs "$WEDDING_PW"
 
 echo "▸ encrypt proof"
 node tools/encrypt-proof.mjs "$GIFT_PW"
+
+echo "▸ encrypt pics"
+node tools/encrypt-pics.mjs "$GIFT_PW"
 
 echo
 echo "✓ ready. review git diff, then commit + push."
