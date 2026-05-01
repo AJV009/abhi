@@ -18,7 +18,7 @@ const COPY = {
   errWrong:       "hmm, not quite. re-read the long note.",            // on wrong password
 };
 
-const GIFT_READY = "2026-05-01T05:00:00+05:30";
+const GIFT_READY = "2026-05-04T05:00:00+05:30";
 const NOTIFY_URL = "https://ntfy.sh/abhi-unlock-alert";
 // ────────────────────────────────────────────────────────────────────────────
 
